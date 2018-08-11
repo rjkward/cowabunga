@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.Serialization.Formatters;
 using UnityEngine;
 
 public class FloorManager : MonoBehaviour
@@ -8,15 +7,18 @@ public class FloorManager : MonoBehaviour
     [SerializeField] private Rigidbody _atomPrefab;
 
     private Rigidbody[][] _floor;
+    private bool[][] _floorModel;
     private const int AtomsPerSide = 25;
     private const float AtomLength = 2f;
 
     private void Awake()
     {
         _floor = new Rigidbody[AtomsPerSide][];
+        _floorModel = new bool[AtomsPerSide][];
         for (int i = 0; i < _floor.Length; i++)
         {
             _floor[i] = new Rigidbody[AtomsPerSide];
+            _floorModel[i] = new bool[AtomsPerSide];
         }
     }
 
@@ -55,21 +57,22 @@ public class FloorManager : MonoBehaviour
     
     private readonly WaitForFixedUpdate _waitForFixed = new WaitForFixedUpdate();
     private readonly WaitForSeconds _waitForOne = new WaitForSeconds(1f);
-    private const float EdgeFallChance = 0.2f;
-    private const float InnerFallChance = 0.001f;
+    private const float EdgeFallChance = 0.01f;
+    private const float InnerFallChance = 0.0001f;
+
+    private readonly List<Vector2> _fallBuffer = new List<Vector2>();
 
     private IEnumerator Erode()
     {
         while (true)
         {
-            for (int i = 0; i < _floor.Length; i++)
+            for (int i = 0; i < AtomsPerSide; i++)
             {
-                Rigidbody[] row = _floor[i];
-                for (int j = 0; j < row.Length; j++)
+                bool[] row = _floorModel[i];
+                for (int j = 0; j < AtomsPerSide; j++)
                 {
-                    yield return _waitForFixed;
-                    Rigidbody atom = row[j];
-                    if (!atom.isKinematic)
+                    bool eroded = row[j];
+                    if (eroded)
                     {
                         continue;
                     }
@@ -78,38 +81,49 @@ public class FloorManager : MonoBehaviour
                     if (openEdges > 0 &&
                         (openEdges > 2 || Random.value * openEdges < EdgeFallChance))
                     {
-                        atom.isKinematic = false;
+                        _fallBuffer.Add(new Vector2(i, j));
                         continue;
                     }
 
                     if (Random.value < InnerFallChance)
                     {
-                        atom.isKinematic = false;
+                        _fallBuffer.Add(new Vector2(i, j));
                     }
                 }
+                yield return _waitForFixed;
             }
+            
+            _fallBuffer.ForEach(vector2 =>
+            {
+                int i = (int)vector2.x;
+                int j = (int)vector2.y;
+                _floor[i][j].isKinematic = false;
+                _floorModel[i][j] = true;
+            });
+            
+            _fallBuffer.Clear();
         }
     }
 
     private int GetOpenEdges(int i, int j)
     {
         int openSides = 0;
-        if (j + 1 == AtomsPerSide || !_floor[i][j + 1].isKinematic)
+        if (j + 1 == AtomsPerSide || _floorModel[i][j + 1])
         {
             openSides += 1;
         }
         
-        if (j == 0 || !_floor[i][j - 1].isKinematic)
+        if (j == 0 || _floorModel[i][j - 1])
         {
             openSides += 1;
         }
         
-        if (i + 1 == AtomsPerSide || !_floor[i + 1][j].isKinematic)
+        if (i + 1 == AtomsPerSide || _floorModel[i + 1][j])
         {
             openSides += 1;
         }
         
-        if (i == 0 || !_floor[i - 1][j].isKinematic)
+        if (i == 0 || _floorModel[i - 1][j])
         {
             openSides += 1;
         }
