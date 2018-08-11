@@ -191,7 +191,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4474744925517290, guid: ed48915cacbac6b43be4558ef93e891e, type: 2}
       propertyPath: m_LocalPosition.y
-      value: 0.086
+      value: -0.352
       objectReference: {fileID: 0}
     - target: {fileID: 4474744925517290, guid: ed48915cacbac6b43be4558ef93e891e, type: 2}
       propertyPath: m_LocalPosition.z
@@ -266,7 +266,7 @@ GameObject:
   - component: {fileID: 1277327990}
   - component: {fileID: 1277327989}
   - component: {fileID: 1277327988}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Plane
   m_TagString: Untagged
   m_Icon: {fileID: 0}
