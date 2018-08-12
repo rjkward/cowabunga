@@ -27,7 +27,10 @@ public class UIManager : MonoBehaviour
 
     private void HandleEnoughPlayers()
     {
-        _startPrompt.SetActive(true);
+        if (!_startPrompt.activeSelf)
+        {
+            _startPrompt.SetActive(true);
+        }
     }
 
     private void HandleStateChanged(GameState newState)
