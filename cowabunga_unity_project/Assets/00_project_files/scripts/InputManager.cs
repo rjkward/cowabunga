@@ -9,7 +9,7 @@ public class InputManager : MonoBehaviour
     public readonly HashSet<KeyCode> KeyDownHashes = new HashSet<KeyCode>();
     public readonly List<KeyCode> KeyUpList = new List<KeyCode>();
     public readonly HashSet<KeyCode> KeyUpHashes = new HashSet<KeyCode>();
-    public bool Space;
+    public bool Space { get; private set; }
     private readonly KeyCode[] _alphabet = new KeyCode[26];
 
     private void Awake()

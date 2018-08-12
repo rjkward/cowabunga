@@ -29,7 +29,7 @@ public class FloorManager : MonoBehaviour
     private readonly WaitForSeconds _wait = new WaitForSeconds(1f / 60f);
     [SerializeField]
     private Rigidbody _atomPrefab;
-    public bool FloorLoaded;
+    public bool FloorLoaded { get; private set; }
 
     private void Awake()
     {
