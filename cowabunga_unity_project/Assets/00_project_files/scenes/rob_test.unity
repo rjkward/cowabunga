@@ -278,7 +278,8 @@ MonoBehaviour:
   m_Text: '
 
 
-    press space, losers'
+
+    press space when yr all in, losers'
 --- !u!222 &174702975
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -708,6 +709,8 @@ MonoBehaviour:
 
     CATTLE ROYALE
 
+
+    a game for 2 to 26 players
 
     press space, loser'
 --- !u!222 &1136899775
@@ -1148,7 +1151,9 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'choose your fighter
+  m_Text: 'choose your CHAMPIONS
+
+    press a letter to join, press again to reroll
 
 
 '
