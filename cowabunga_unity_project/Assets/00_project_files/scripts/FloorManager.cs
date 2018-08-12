@@ -18,6 +18,7 @@ public class FloorManager : MonoBehaviour
         }
     }
     
+    public event Action FloorLoaded;
     private const int AtomsPerSide = 25;
     private const float AtomLength = 2f;
     private const float EdgeFallChance = 0.05f;
@@ -39,18 +40,18 @@ public class FloorManager : MonoBehaviour
         }
     }
 
-    private void Start()
-    {
-        GenerateFloor();
-        StartCoroutine(Erode());
-    }
+    // private void Start()
+    // {
+    //     GenerateFloor();
+    //     StartCoroutine(Erode());
+    // }
 
     private void OnDisable()
     {
         StopAllCoroutines();
     }
 
-    private void GenerateFloor()
+    public void GenerateFloor()
     {
         for (int i = 0; i < AtomsPerSide; i++)
         {
@@ -61,9 +62,17 @@ public class FloorManager : MonoBehaviour
                 newAtom.position = new Vector3(i * AtomLength, 0f, j * AtomLength);
             }
         }
-    }
-    
 
+        if (FloorLoaded != null)
+        {
+            FloorLoaded.Invoke();
+        }
+    }
+
+    public void StartErosion()
+    {
+        StartCoroutine(Erode());
+    }
 
     private IEnumerator Erode()
     {
