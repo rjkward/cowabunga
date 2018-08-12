@@ -6,14 +6,13 @@ public class GameManager : MonoBehaviour
 {
     public static event Action<GameState> StateChanged;
     public static GameState CurrentState = GameState.Entry;
-    [SerializeField]
-    private GameObject _splashScreen;
-    [SerializeField]
-    private GameObject _selectScreen;
+    
     [SerializeField]
     private FloorManager _floorManager;
     [SerializeField]
     private Camera _mainCamera;
+
+    private bool _enoughPlayers;
 
     private static void ChangeGameState(GameState newState)
     {
@@ -27,11 +26,20 @@ public class GameManager : MonoBehaviour
     private void OnEnable()
     {
         InputManager.NewInput += HandleNewInput;
+        PlayerManager.EnoughPlayers += HandleEnoughPlayers;
+        PlayerManager.OnePlayerRemaining += HandleOneRemaining;
     }
 
     private void OnDisable()
     {
         InputManager.NewInput -= HandleNewInput;
+        PlayerManager.EnoughPlayers -= HandleEnoughPlayers;
+        PlayerManager.OnePlayerRemaining -= HandleOneRemaining;
+    }
+
+    private void HandleOneRemaining(Rob_CharacterController remaining)
+    {
+        ChangeGameState(GameState.Ended);
     }
 
     private void HandleNewInput(InputManager input)
@@ -42,16 +50,13 @@ public class GameManager : MonoBehaviour
                 if (input.Space && _floorManager.FloorLoaded)
                 {
                     ChangeGameState(GameState.PlayerSelect);
-                    _splashScreen.SetActive(false);
-                    _selectScreen.SetActive(true);
                 }
                 
                 break;
             case GameState.PlayerSelect:
-                if (input.Space)
+                if (input.Space && _enoughPlayers)
                 {
                     ChangeGameState(GameState.Started);
-                    _selectScreen.SetActive(false);
                     _floorManager.StartErosion();
                 }
                 
@@ -63,5 +68,10 @@ public class GameManager : MonoBehaviour
             default:
                 throw new ArgumentOutOfRangeException();
         }
+    }
+
+    private void HandleEnoughPlayers()
+    {
+        _enoughPlayers = true;
     }
 }

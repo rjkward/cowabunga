@@ -45,9 +45,32 @@ public class FloorManager : MonoBehaviour
         GenerateFloor();
     }
 
+    private void OnEnable()
+    {
+        GameManager.StateChanged += HandleStateChanged;
+    }
+
     private void OnDisable()
     {
-        StopAllCoroutines();
+        GameManager.StateChanged -= HandleStateChanged;
+    }
+
+    private void HandleStateChanged(GameState newState)
+    {
+        switch (newState)
+        {
+            case GameState.Entry:
+                break;
+            case GameState.PlayerSelect:
+                break;
+            case GameState.Started:
+                break;
+            case GameState.Ended:
+                StopAllCoroutines();
+                break;
+            default:
+                throw new ArgumentOutOfRangeException("newState", newState, null);
+        }
     }
 
     private void GenerateFloor()

@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Enums;
 using UnityEngine;
 
 public class PlayerManager : MonoBehaviour
 {
+    public static event Action<Rob_CharacterController> OnePlayerRemaining;
+    public static event Action EnoughPlayers;
     [SerializeField]
     private Rob_CharacterController _playerPrefab;
     private readonly List<Rob_CharacterController> _playerList = new List<Rob_CharacterController>();
@@ -39,12 +42,23 @@ public class PlayerManager : MonoBehaviour
                 {
                     _playerList[i].enabled = true;
                 }
-                
+
+                StartCoroutine(CheckForWin());
                 break;
             case GameState.Ended:
+                StopAllCoroutines();
+                HandleEndGame();
                 break;
             default:
                 throw new ArgumentOutOfRangeException("newState", newState, null);
+        }
+    }
+
+    private void HandleEndGame()
+    {
+        for (int i = 0; i < _playerList.Count; i++)
+        {
+            _playerList[i].enabled = false;
         }
     }
 
@@ -106,6 +120,10 @@ public class PlayerManager : MonoBehaviour
             else
             {
                 CreateNewPlayer(key);
+                if (_playerList.Count > 1 && EnoughPlayers != null)
+                {
+                    EnoughPlayers.Invoke();
+                }
             }
         }
     }
@@ -124,5 +142,47 @@ public class PlayerManager : MonoBehaviour
     private void RerollPlayer(KeyCode key)
     {
         // TODO
+    }
+    
+    private readonly WaitForSeconds _wait = new WaitForSeconds(0.5f);
+
+    private IEnumerator CheckForWin()
+    {
+        bool moreThanOnePlayerAlive = true;
+        Rob_CharacterController last = _playerList[0];
+        while (moreThanOnePlayerAlive)
+        {
+            int aliveCount = 0;
+            for (int i = 0; i < _playerList.Count; i++)
+            {
+                Rob_CharacterController player = _playerList[i];
+                if (!player.gameObject.activeSelf)
+                {
+                    continue;
+                }
+
+                if (player.transform.position.y < -50f)
+                {
+                    player.gameObject.SetActive(false);
+                    continue;
+                }
+
+                if (player.transform.position.y < -10f)
+                {
+                    continue;
+                }
+
+                last = player;
+                aliveCount++;
+            }
+
+            moreThanOnePlayerAlive = aliveCount > 1;
+            yield return _wait;
+        }
+
+        if (OnePlayerRemaining != null)
+        {
+            OnePlayerRemaining.Invoke(last);
+        }
     }
 }
