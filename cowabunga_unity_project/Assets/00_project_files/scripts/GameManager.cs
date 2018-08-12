@@ -9,6 +9,8 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     private GameObject _splashScreen;
     [SerializeField]
+    private GameObject _selectScreen;
+    [SerializeField]
     private FloorManager _floorManager;
     [SerializeField]
     private Camera _mainCamera;
@@ -41,6 +43,7 @@ public class GameManager : MonoBehaviour
                 {
                     ChangeGameState(GameState.PlayerSelect);
                     _splashScreen.SetActive(false);
+                    _selectScreen.SetActive(true);
                 }
                 
                 break;
@@ -48,6 +51,7 @@ public class GameManager : MonoBehaviour
                 if (input.Space)
                 {
                     ChangeGameState(GameState.Started);
+                    _selectScreen.SetActive(false);
                     _floorManager.StartErosion();
                 }
                 

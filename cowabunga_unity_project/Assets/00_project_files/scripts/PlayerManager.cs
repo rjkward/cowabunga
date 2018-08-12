@@ -12,16 +12,40 @@ public class PlayerManager : MonoBehaviour
     [SerializeField]
     private Transform _player1Spawn;
 
-    private float _spawnOffset = 2f;
+    private float _spawnOffset = 3f;
 
     private void OnEnable()
     {
         InputManager.NewInput += HandleNewInput;
+        GameManager.StateChanged += HandleStateChanged;
     }
 
     private void OnDisable()
     {
         InputManager.NewInput -= HandleNewInput;
+        GameManager.StateChanged -= HandleStateChanged;
+    }
+
+    private void HandleStateChanged(GameState newState)
+    {
+        switch (newState)
+        {
+            case GameState.Entry:
+                break;
+            case GameState.PlayerSelect:
+                break;
+            case GameState.Started:
+                for (int i = 0; i < _playerList.Count; i++)
+                {
+                    _playerList[i].enabled = true;
+                }
+                
+                break;
+            case GameState.Ended:
+                break;
+            default:
+                throw new ArgumentOutOfRangeException("newState", newState, null);
+        }
     }
 
     private void HandleNewInput(InputManager input)
@@ -34,11 +58,37 @@ public class PlayerManager : MonoBehaviour
                 CreateNewPlayers(input);
                 break;
             case GameState.Started:
+                UpdateInput(input);
                 break;
             case GameState.Ended:
                 break;
             default:
                 throw new ArgumentOutOfRangeException();
+        }
+    }
+
+    private void UpdateInput(InputManager input)
+    {
+        var down = input.KeyDownList;
+        var downCount = down.Count;
+        for (int i = 0; i < downCount; i++)
+        {
+            Rob_CharacterController player;
+            if (_playerDict.TryGetValue(down[i], out player))
+            {
+                player.SetInput(1f);
+            }
+        }
+        
+        var up = input.KeyUpList;
+        var upCount = up.Count;
+        for (int i = 0; i < upCount; i++)
+        {
+            Rob_CharacterController player;
+            if (_playerDict.TryGetValue(up[i], out player))
+            {
+                player.SetInput(0f);
+            }
         }
     }
 

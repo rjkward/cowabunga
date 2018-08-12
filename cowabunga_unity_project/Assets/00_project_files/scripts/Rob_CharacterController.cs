@@ -3,17 +3,20 @@
 public class Rob_CharacterController : MonoBehaviour
 {
     [SerializeField]
-    private float forVel = 10;
+    private float _forVel = 10;
     [SerializeField]
-    private float rotaVel = 10f;
+    private float _rotaVel = 10f;
     
     [SerializeField]
-    private float _maxBounceTime = 0.15f;
+    private float _maxBounceTime = 0.1f;
     [SerializeField]
     private float _bounceMultiplier = 5f;
 
     CharacterController _characterController;
-    public float turnInput;
+    private float _turnInput;
+    private float hitTime;
+    private bool isHit;
+    private Vector3 _bounceDir;
 
     private void Awake()
     {
@@ -23,13 +26,17 @@ public class Rob_CharacterController : MonoBehaviour
     // Replace with keys with multiple players.
     private void GetInput()
     {
-        turnInput = Input.GetAxis("Horizontal");
+        _turnInput = Input.GetAxis("Horizontal");
     }
 
+    public void SetInput(float horizontal)
+    {
+        _turnInput = horizontal;
+    }
 
     private void Update()
     {
-        GetInput();
+        //GetInput();
     }
 
     private void FixedUpdate()
@@ -44,12 +51,12 @@ public class Rob_CharacterController : MonoBehaviour
     {
         if (isHit == false)
         {
-            _characterController.SimpleMove(Vector3.Lerp(_characterController.velocity, transform.forward * forVel, 0.6f));
+            _characterController.SimpleMove(Vector3.Lerp(_characterController.velocity, transform.forward * _forVel, 0.6f));
         
         }
         else
         {
-            _characterController.SimpleMove(_bounceDir * forVel * _bounceMultiplier);
+            _characterController.SimpleMove(_bounceDir * _forVel * _bounceMultiplier);
             hitTime -= Time.fixedDeltaTime;
             if (hitTime <= 0f)
             {
@@ -61,7 +68,7 @@ public class Rob_CharacterController : MonoBehaviour
     // Turns the cow
     void Turn()
     {
-        transform.Rotate(Vector3.up, rotaVel * turnInput);
+        transform.Rotate(Vector3.up, _rotaVel * _turnInput);
     }
 
     private const string CowTag = "Cow";
@@ -89,9 +96,6 @@ public class Rob_CharacterController : MonoBehaviour
         }
     }
 
-    private float hitTime;
-    private bool isHit;
-    private Vector3 _bounceDir;
 
     // If cows have bumped into each other but one has boosted then the boosted cow is fine
     public void Bounce(Vector3 bounceDir)
