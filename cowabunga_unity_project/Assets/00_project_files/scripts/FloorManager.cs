@@ -18,7 +18,6 @@ public class FloorManager : MonoBehaviour
         }
     }
     
-    public event Action FloorLoaded;
     private const int AtomsPerSide = 25;
     private const float AtomLength = 2f;
     private const float EdgeFallChance = 0.05f;
@@ -30,6 +29,7 @@ public class FloorManager : MonoBehaviour
     private readonly WaitForSeconds _wait = new WaitForSeconds(1f / 60f);
     [SerializeField]
     private Rigidbody _atomPrefab;
+    public bool FloorLoaded;
 
     private void Awake()
     {
@@ -40,18 +40,17 @@ public class FloorManager : MonoBehaviour
         }
     }
 
-    // private void Start()
-    // {
-    //     GenerateFloor();
-    //     StartCoroutine(Erode());
-    // }
+    private void Start()
+    {
+        GenerateFloor();
+    }
 
     private void OnDisable()
     {
         StopAllCoroutines();
     }
 
-    public void GenerateFloor()
+    private void GenerateFloor()
     {
         for (int i = 0; i < AtomsPerSide; i++)
         {
@@ -63,10 +62,7 @@ public class FloorManager : MonoBehaviour
             }
         }
 
-        if (FloorLoaded != null)
-        {
-            FloorLoaded.Invoke();
-        }
+        FloorLoaded = true;
     }
 
     public void StartErosion()

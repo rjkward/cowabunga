@@ -23,7 +23,7 @@ public class OK_CharacterController : MonoBehaviour
 
     Quaternion tarRota;
     Rigidbody PC_Rigid;
-    float turnInput;
+    public float turnInput;
     float time;
 
     Vector3 v3_Velocity;

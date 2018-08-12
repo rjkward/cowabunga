@@ -24,23 +24,40 @@ public class GameManager : MonoBehaviour
 
     private void OnEnable()
     {
-        _floorManager.FloorLoaded += OnLoadFloor;
+        InputManager.NewInput += HandleNewInput;
     }
 
     private void OnDisable()
     {
-        _floorManager.FloorLoaded -= OnLoadFloor;
+        InputManager.NewInput -= HandleNewInput;
     }
 
-    private void Start()
+    private void HandleNewInput(InputManager input)
     {
-        _floorManager.GenerateFloor();
-    }
-    
-    private void OnLoadFloor()
-    {
-        ChangeGameState(GameState.PlayerSelect);
-        _splashScreen.SetActive(false);
-        _floorManager.StartErosion();
+        switch (CurrentState)
+        {
+            case GameState.Entry:
+                if (input.Space && _floorManager.FloorLoaded)
+                {
+                    ChangeGameState(GameState.PlayerSelect);
+                    _splashScreen.SetActive(false);
+                }
+                
+                break;
+            case GameState.PlayerSelect:
+                if (input.Space)
+                {
+                    ChangeGameState(GameState.Started);
+                    _floorManager.StartErosion();
+                }
+                
+                break;
+            case GameState.Started:
+                break;
+            case GameState.Ended:
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
     }
 }
