@@ -69,8 +69,8 @@ public class PlayerManager : MonoBehaviour
 
     private void UpdateInput(InputManager input)
     {
-        var down = input.KeyDownList;
-        var downCount = down.Count;
+        List<KeyCode> down = input.KeyDownList;
+        int downCount = down.Count;
         for (int i = 0; i < downCount; i++)
         {
             Rob_CharacterController player;
@@ -80,8 +80,8 @@ public class PlayerManager : MonoBehaviour
             }
         }
         
-        var up = input.KeyUpList;
-        var upCount = up.Count;
+        List<KeyCode> up = input.KeyUpList;
+        int upCount = up.Count;
         for (int i = 0; i < upCount; i++)
         {
             Rob_CharacterController player;

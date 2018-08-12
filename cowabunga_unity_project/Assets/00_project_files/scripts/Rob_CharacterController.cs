@@ -23,27 +23,15 @@ public class Rob_CharacterController : MonoBehaviour
         _characterController = GetComponent<CharacterController>();
     }
 
-    // Replace with keys with multiple players.
-    private void GetInput()
-    {
-        _turnInput = Input.GetAxis("Horizontal");
-    }
-
     public void SetInput(float horizontal)
     {
         _turnInput = horizontal;
-    }
-
-    private void Update()
-    {
-        //GetInput();
     }
 
     private void FixedUpdate()
     {
         Turn();
         MoveForward();
-        // Boost();
     }
 
     // Moves the cow forward
@@ -90,9 +78,6 @@ public class Rob_CharacterController : MonoBehaviour
             {
                 Bounce(-toOther);
             }
-            
-            // Debug.Log("hit");
-            // hit.gameObject.SendMessage("Bounce");
         }
     }
 

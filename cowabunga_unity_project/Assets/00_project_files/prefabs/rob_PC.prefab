@@ -124,11 +124,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a015ed6e42d4ad28424c28d631b9816, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  forVel: 10
-  rotaVel: 10
-  _maxBounceTime: 0.2
+  _forVel: 10
+  _rotaVel: 10
+  _maxBounceTime: 0.1
   _bounceMultiplier: 5
-  turnInput: 0
 --- !u!143 &143227277097737706
 CharacterController:
   m_ObjectHideFlags: 1
