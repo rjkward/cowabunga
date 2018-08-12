@@ -1,6 +1,9 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using Enums;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class FloorManager : MonoBehaviour
 {
@@ -15,19 +18,13 @@ public class FloorManager : MonoBehaviour
         }
     }
     
-    private struct BoolPair
-    {
-        public bool Falling;
-        public bool Disabled;
-    }
-    
     private const int AtomsPerSide = 25;
     private const float AtomLength = 2f;
     private const float EdgeFallChance = 0.05f;
     private const float InnerFallChance = 0.00005f;
     private const float DisableDepth = -50f;
-    private readonly Rigidbody[][] _floorView = new Rigidbody[AtomsPerSide][];
-    private readonly BoolPair[][] _floorModel = new BoolPair[AtomsPerSide][];
+    private readonly Rigidbody[][] _floorAtoms = new Rigidbody[AtomsPerSide][];
+    private readonly AtomState[][] _floorState = new AtomState[AtomsPerSide][];
     private readonly List<IntPair> _fallBuffer = new List<IntPair>();
     private readonly WaitForSeconds _wait = new WaitForSeconds(1f / 60f);
     [SerializeField]
@@ -37,8 +34,8 @@ public class FloorManager : MonoBehaviour
     {
         for (int i = 0; i < AtomsPerSide; i++)
         {
-            _floorView[i] = new Rigidbody[AtomsPerSide];
-            _floorModel[i] = new BoolPair[AtomsPerSide];
+            _floorAtoms[i] = new Rigidbody[AtomsPerSide];
+            _floorState[i] = new AtomState[AtomsPerSide];
         }
     }
 
@@ -60,7 +57,7 @@ public class FloorManager : MonoBehaviour
             for (int j = 0; j < AtomsPerSide; j++)
             {
                 Rigidbody newAtom = Instantiate(_atomPrefab, transform);
-                _floorView[i][j] = newAtom;
+                _floorAtoms[i][j] = newAtom;
                 newAtom.position = new Vector3(i * AtomLength, 0f, j * AtomLength);
             }
         }
@@ -72,41 +69,45 @@ public class FloorManager : MonoBehaviour
     {
         while (true) // aaaaaagh!!!
         {
-            bool finished = true;
+            bool noActiveOrFallingAtoms = true;
             for (int i = 0; i < AtomsPerSide; i++)
             {
-                BoolPair[] row = _floorModel[i];
+                AtomState[] row = _floorState[i];
                 for (int j = 0; j < AtomsPerSide; j++)
                 {
-                    BoolPair atomState = row[j];
-                    if (atomState.Falling)
+                    AtomState atomState = row[j];
+                    switch (atomState)
                     {
-                        if (!atomState.Disabled)
-                        {
-                            finished = false;
-                            Rigidbody atom = _floorView[i][j];
+                        case AtomState.Disabled:
+                            break;
+                        case AtomState.Active:
+                            int fallenNeighbours = GetFallenNeighbourCount(i, j);
+                            if (fallenNeighbours > 0)
+                            {
+                                if (fallenNeighbours > 2 || Random.value * fallenNeighbours < EdgeFallChance)
+                                {
+                                    _fallBuffer.Add(new IntPair(i, j));
+                                }
+                            }
+                            else if (Random.value < InnerFallChance)
+                            {
+                                _fallBuffer.Add(new IntPair(i, j));
+                            }
+
+                            noActiveOrFallingAtoms = false;
+                            break;
+                        case AtomState.Falling:
+                            Rigidbody atom = _floorAtoms[i][j];
                             if (atom.transform.position.y < DisableDepth)
                             {
                                 atom.gameObject.SetActive(false);
-                                atomState.Disabled = true;
+                                row[j] = AtomState.Disabled;
                             }
-                        }
-                        
-                        continue;
-                    }
-                    
-                    finished = false;
-                    int fallenNeighbours = GetFallenNeighbourCount(i, j);
-                    if (fallenNeighbours > 0 &&
-                        (fallenNeighbours > 2 || Random.value * fallenNeighbours < EdgeFallChance))
-                    {
-                        _fallBuffer.Add(new IntPair(i, j));
-                        continue;
-                    }
 
-                    if (Random.value < InnerFallChance)
-                    {
-                        _fallBuffer.Add(new IntPair(i, j));
+                            noActiveOrFallingAtoms = false;
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
                     }
                 }
                 
@@ -119,15 +120,14 @@ public class FloorManager : MonoBehaviour
                 IntPair atomPos = _fallBuffer[x];
                 int i = atomPos.I;
                 int j = atomPos.J;
-                _floorView[i][j].isKinematic = false;
-                _floorModel[i][j].Falling = true;
+                _floorAtoms[i][j].isKinematic = false;
+                _floorState[i][j] = AtomState.Falling;
             }
             
             _fallBuffer.Clear();
-            if (finished)
+            if (noActiveOrFallingAtoms)
             {
-                Debug.LogError("done");
-                yield break;
+                break;
             }
         }
     }
@@ -135,22 +135,22 @@ public class FloorManager : MonoBehaviour
     private int GetFallenNeighbourCount(int i, int j)
     {
         int fallen = 0;
-        if (j + 1 == AtomsPerSide || _floorModel[i][j + 1].Falling)
+        if (j + 1 == AtomsPerSide || _floorState[i][j + 1] != AtomState.Active)
         {
             fallen += 1;
         }
         
-        if (j == 0 || _floorModel[i][j - 1].Falling)
+        if (j == 0 || _floorState[i][j - 1] != AtomState.Active)
         {
             fallen += 1;
         }
         
-        if (i + 1 == AtomsPerSide || _floorModel[i + 1][j].Falling)
+        if (i + 1 == AtomsPerSide || _floorState[i + 1][j] != AtomState.Active)
         {
             fallen += 1;
         }
         
-        if (i == 0 || _floorModel[i - 1][j].Falling)
+        if (i == 0 || _floorState[i - 1][j] != AtomState.Active)
         {
             fallen += 1;
         }
