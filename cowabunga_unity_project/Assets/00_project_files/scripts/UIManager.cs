@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections;
 using Enums;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
@@ -12,6 +14,13 @@ public class UIManager : MonoBehaviour
     private GameObject _startPrompt;
     [SerializeField] 
     private GameObject _victoryScreen;
+    [SerializeField] 
+    private GameObject _startScreen;
+    [SerializeField] 
+    private Text _startText;
+
+    private readonly string[] _startWords = new[]
+        { "FIGHT", "TO", "THE", "DEATH", "YOU", "CAN", "ONLY", "TURN", "RIGHT"};
 
     private void OnEnable()
     {
@@ -45,6 +54,7 @@ public class UIManager : MonoBehaviour
                 break;
             case GameState.Started:
                 _selectScreen.SetActive(false);
+                StartCoroutine(SlideShowWords());
                 break;
             case GameState.Ended:
                 _victoryScreen.SetActive(true);
@@ -52,5 +62,19 @@ public class UIManager : MonoBehaviour
             default:
                 throw new ArgumentOutOfRangeException("newState", newState, null);
         }
+    }
+
+    readonly WaitForSeconds _wait = new WaitForSeconds(0.25f);
+
+    private IEnumerator SlideShowWords()
+    {
+        _startScreen.SetActive(true);
+        for (int i = 0; i < _startWords.Length; i++)
+        {
+            _startText.text = _startWords[i];
+            yield return _wait;
+        }
+        
+        _startScreen.SetActive(false);
     }
 }
