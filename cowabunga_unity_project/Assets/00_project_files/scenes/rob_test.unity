@@ -370,7 +370,7 @@ MonoBehaviour:
 
 
 
-    press space when  everyone''s here'
+    press space when everyone''s here'
 --- !u!222 &174702975
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1426,7 +1426,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'choose your CHAMPIONS
+  m_Text: 'CHOOSE YOUR CHAMPIONS
 
     press a letter to join, press again to reroll
 
