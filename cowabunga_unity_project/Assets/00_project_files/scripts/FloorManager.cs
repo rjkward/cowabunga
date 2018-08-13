@@ -17,6 +17,8 @@ public class FloorManager : MonoBehaviour
             J = j;
         }
     }
+
+    public static event Action<Vector3> BroadcastPivot;
     
     private const int AtomsPerSide = 25;
     private const float AtomLength = 2f;
@@ -83,6 +85,13 @@ public class FloorManager : MonoBehaviour
                 _floorAtoms[i][j] = newAtom;
                 newAtom.position = new Vector3(i * AtomLength, 0f, j * AtomLength);
             }
+        }
+
+        int pivotIndex = Mathf.FloorToInt(AtomsPerSide * 0.5f);
+        Vector3 pivot = _floorAtoms[pivotIndex][pivotIndex].position;
+        if (BroadcastPivot != null)
+        {
+            BroadcastPivot(pivot);
         }
 
         FloorLoaded = true;

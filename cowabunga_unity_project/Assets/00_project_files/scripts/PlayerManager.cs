@@ -8,6 +8,7 @@ public class PlayerManager : MonoBehaviour
 {
     public static event Action<Rob_CharacterController> OnePlayerRemaining;
     public static event Action EnoughPlayers;
+    public static event Action<IList<Rob_CharacterController>> PlayerCreated;
     [SerializeField]
     private Rob_CharacterController _playerPrefab;
     private readonly List<Rob_CharacterController> _playerList = new List<Rob_CharacterController>();
@@ -106,6 +107,8 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
+    private bool _enoughInvoked;
+
     private void CreateNewPlayers(InputManager input)
     {
         List<KeyCode> keysUp = input.KeyUpList;
@@ -120,9 +123,15 @@ public class PlayerManager : MonoBehaviour
             else
             {
                 CreateNewPlayer(key);
-                if (_playerList.Count > 1 && EnoughPlayers != null)
+                if (PlayerCreated != null)
+                {
+                    PlayerCreated.Invoke(_playerList.AsReadOnly());
+                }
+                
+                if (!_enoughInvoked && _playerList.Count > 1 && EnoughPlayers != null)
                 {
                     EnoughPlayers.Invoke();
+                    _enoughInvoked = true;
                 }
             }
         }
