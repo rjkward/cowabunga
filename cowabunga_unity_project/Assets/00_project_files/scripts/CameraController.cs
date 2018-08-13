@@ -73,11 +73,25 @@ public class CameraController : MonoBehaviour
                 _lookTarget = _mapCentre;
                 _currentLook = _lookTarget;
                 _targetPosition.position = _defaultCameraPos.position;
+                _distance = _defaultCameraPos.position - _mapCentre;
+                _rotatePivot = _mapCentre;
                 StartCoroutine(SmoothDamp());
+                StartCoroutine(Rotate());
                 break;
             case GameState.Started:
+                StartCoroutine(TrackPlayers());
                 break;
             case GameState.Ended:
+                for (int i = 0; i < _players.Count; i++)
+                {
+                    Rob_CharacterController player = _players[i];
+                    if (player.transform.position.y > -2f)
+                    {
+                        _rotatePivot = player.transform.position;
+                    }
+                }
+                
+                _distance = new Vector3(0f, 3f, 3f);
                 break;
             default:
                 throw new ArgumentOutOfRangeException("newState", newState, null);
@@ -86,6 +100,34 @@ public class CameraController : MonoBehaviour
 
     private Vector3 _velocity;
     private Vector3 _lookVelocity;
+    private Vector3 _distance;
+    private Vector3 _rotatePivot;
+
+    private IEnumerator TrackPlayers()
+    {
+        while (true)
+        {
+            int alive = 0;
+            Vector3 lookTarget = Vector3.zero;
+            for (int i = 0; i < _players.Count; i++)
+            {
+                Rob_CharacterController player = _players[i];
+                if (player.transform.position.y > -2f)
+                {
+                    alive++;
+                    lookTarget += player.transform.position;
+                }
+            }
+    
+            if (alive > 0)
+            {
+                lookTarget /= (float)alive;
+                _lookTarget = lookTarget;
+            }
+
+            yield return null;
+        }
+    }
 
     private IEnumerator SmoothDamp()
     {
@@ -101,12 +143,21 @@ public class CameraController : MonoBehaviour
                 _currentLook,
                 _lookTarget,
                 ref _lookVelocity,
-                0.15f);
+                0.3f);
             
             _mainCamera.transform.LookAt(_currentLook);
             
             
     
+            yield return null;
+        }
+    }
+
+    private IEnumerator Rotate()
+    {
+        while (true)
+        {
+            _targetPosition.position = _rotatePivot + Quaternion.Euler(0f, Time.time * 5f, 0f) * _distance;
             yield return null;
         }
     }

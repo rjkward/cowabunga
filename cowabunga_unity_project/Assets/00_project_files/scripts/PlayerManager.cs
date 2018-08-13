@@ -176,7 +176,7 @@ public class PlayerManager : MonoBehaviour
                     continue;
                 }
 
-                if (player.transform.position.y < -10f)
+                if (player.transform.position.y < -2f)
                 {
                     continue;
                 }

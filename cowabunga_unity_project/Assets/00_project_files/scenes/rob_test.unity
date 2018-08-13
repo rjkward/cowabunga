@@ -279,7 +279,7 @@ MonoBehaviour:
 
 
 
-    press space when yr all in'
+    press space when  everyone''s here'
 --- !u!222 &174702975
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -652,10 +652,7 @@ MonoBehaviour:
     m_LineSpacing: 1
   m_Text: 'NOW THAT''S
 
-    "HASHTAG COWABUNGA"
-
-
-    ("cattle royale")'
+    "COWABUNGA"'
 --- !u!222 &1106524922
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -783,7 +780,7 @@ MonoBehaviour:
     CATTLE ROYALE
 
 
-    a game for 2 to 26 players
+    2 to 26 players
 
     press space, loser'
 --- !u!222 &1136899775
