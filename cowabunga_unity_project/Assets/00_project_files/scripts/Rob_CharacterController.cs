@@ -15,7 +15,7 @@ public class Rob_CharacterController : MonoBehaviour
     CharacterController _characterController;
     private float _turnInput;
     private float hitTime;
-    private bool isHit;
+    public bool IsHit { get; private set; }
     private Vector3 _bounceDir;
 
     private void Awake()
@@ -37,7 +37,7 @@ public class Rob_CharacterController : MonoBehaviour
     // Moves the cow forward
     void MoveForward()
     {
-        if (isHit == false)
+        if (IsHit == false)
         {
             _characterController.SimpleMove(Vector3.Lerp(_characterController.velocity, transform.forward * _forVel, 0.6f));
         
@@ -48,7 +48,7 @@ public class Rob_CharacterController : MonoBehaviour
             hitTime -= Time.fixedDeltaTime;
             if (hitTime <= 0f)
             {
-                isHit = false;
+                IsHit = false;
             }
         }
     }
@@ -68,13 +68,15 @@ public class Rob_CharacterController : MonoBehaviour
         {
             Transform other = hit.transform;
             Vector3 toOther = (other.position - transform.position).normalized;
-            if (Vector3.Angle(transform.forward, toOther) < 45f)
+            bool selfIsHit = IsHit;
+            var otherCc = hit.gameObject.GetComponent<Rob_CharacterController>();
+            bool otherIsHit = otherCc.IsHit;
+            if (!selfIsHit && Vector3.Angle(transform.forward, toOther) < 45f)
             {
-                var otherCc = hit.gameObject.GetComponent<Rob_CharacterController>();
                 otherCc.Bounce(toOther);
             }
 
-            if (Vector3.Angle(other.forward, -toOther) < 45f)
+            if (!otherIsHit && Vector3.Angle(other.forward, -toOther) < 45f)
             {
                 Bounce(-toOther);
             }
@@ -87,6 +89,6 @@ public class Rob_CharacterController : MonoBehaviour
     {
         _bounceDir = bounceDir;
         hitTime = _maxBounceTime;
-        isHit = true;
+        IsHit = true;
     }
 }
