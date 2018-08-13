@@ -18,6 +18,9 @@ public class Rob_CharacterController : MonoBehaviour
     public bool IsHit { get; private set; }
     private Vector3 _bounceDir;
 
+    [SerializeField]
+    private GameObject[] _skins;
+
     private void Awake()
     {
         _characterController = GetComponent<CharacterController>();
@@ -79,6 +82,7 @@ public class Rob_CharacterController : MonoBehaviour
             
             Transform other = hit.transform;
             Vector3 toOther = (other.position - transform.position).normalized;
+            
             if (Vector3.Angle(transform.forward, toOther) < 45f)
             {
                 otherCc.Bounce(toOther);
@@ -98,5 +102,16 @@ public class Rob_CharacterController : MonoBehaviour
         _bounceDir = bounceDir;
         hitTime = _maxBounceTime;
         IsHit = true;
+    }
+
+    public void PickRandomSkin()
+    {
+        for (int i = 0; i < _skins.Length; i++)
+        {
+            _skins[i].SetActive(false);
+        }
+
+        int newSkin = Random.Range(0, _skins.Length);
+        _skins[newSkin].SetActive(true);
     }
 }

@@ -690,7 +690,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _floorManager: {fileID: 145991597}
-  _mainCamera: {fileID: 1978348760}
 --- !u!4 &1124913189
 Transform:
   m_ObjectHideFlags: 0

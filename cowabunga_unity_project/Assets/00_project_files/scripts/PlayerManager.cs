@@ -128,7 +128,7 @@ public class PlayerManager : MonoBehaviour
             Rob_CharacterController player;
             if (_playerDict.TryGetValue(key, out player))
             {
-                RerollPlayer(key);
+                player.PickRandomSkin();
             }
             else
             {
@@ -152,6 +152,7 @@ public class PlayerManager : MonoBehaviour
     private void CreateNewPlayer(KeyCode key)
     {
         Rob_CharacterController newPlayer = Instantiate(_playerPrefab, transform);
+        newPlayer.PickRandomSkin();
         Vector2 pos;
         do
         {
@@ -165,11 +166,6 @@ public class PlayerManager : MonoBehaviour
         _playerDict[key] = newPlayer;
         _playerList.Add(newPlayer);
         _usedPositions.Add(pos);
-    }
-    
-    private void RerollPlayer(KeyCode key)
-    {
-        // TODO
     }
     
     private readonly WaitForSeconds _wait = new WaitForSeconds(0.5f);
