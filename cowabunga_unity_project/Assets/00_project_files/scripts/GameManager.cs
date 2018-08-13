@@ -9,8 +9,6 @@ public class GameManager : MonoBehaviour
     
     [SerializeField]
     private FloorManager _floorManager;
-    [SerializeField]
-    private Camera _mainCamera;
 
     private bool _enoughPlayers;
 
