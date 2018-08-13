@@ -1,6 +1,7 @@
 ﻿using System;
 using Enums;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -62,6 +63,13 @@ public class GameManager : MonoBehaviour
             case GameState.Started:
                 break;
             case GameState.Ended:
+                if (input.Space)
+                {
+                    ChangeGameState(GameState.Entry);
+                    Scene s = SceneManager.GetActiveScene();
+                    SceneManager.LoadScene(s.name);
+                }
+                
                 break;
             default:
                 throw new ArgumentOutOfRangeException();
