@@ -279,6 +279,10 @@ MonoBehaviour:
 
 
 
+
+
+
+
     press space when  everyone''s here'
 --- !u!222 &174702975
 CanvasRenderer:
@@ -774,9 +778,13 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: '#cowabunga
+  m_Text: '
+
+
+    #cowabunga
 
     CATTLE ROYALE
+
 
 
     2 to 26 players
@@ -1223,6 +1231,10 @@ MonoBehaviour:
   m_Text: 'choose your CHAMPIONS
 
     press a letter to join, press again to reroll
+
+
+
+
 
 
 '
