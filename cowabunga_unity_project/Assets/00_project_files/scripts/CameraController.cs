@@ -36,7 +36,6 @@ public class CameraController : MonoBehaviour
     private void HandleBroadcastPivot(Vector3 pivot)
     {
         _mapCentre = pivot;
-        Debug.Log(_mapCentre.ToString());
     }
 
     private void OnDisable()
@@ -57,8 +56,6 @@ public class CameraController : MonoBehaviour
         }
 
         target /= (float)playerList.Count;
-        
-        Debug.Log(target);
 
         _lookTarget = target;
     }
@@ -91,7 +88,7 @@ public class CameraController : MonoBehaviour
                     }
                 }
                 
-                _distance = new Vector3(0f, 3f, 3f);
+                _distance = new Vector3(0f, 1f, 3f);
                 break;
             default:
                 throw new ArgumentOutOfRangeException("newState", newState, null);
@@ -157,7 +154,7 @@ public class CameraController : MonoBehaviour
     {
         while (true)
         {
-            _targetPosition.position = _rotatePivot + Quaternion.Euler(0f, Time.time * 5f, 0f) * _distance;
+            _targetPosition.position = _rotatePivot + Quaternion.Euler(0f, Time.time * 20f, 0f) * _distance;
             yield return null;
         }
     }
