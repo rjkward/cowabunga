@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Enums;
 using UnityEngine;
+using Random = System.Random;
 
 public class PlayerManager : MonoBehaviour
 {
@@ -22,12 +23,21 @@ public class PlayerManager : MonoBehaviour
     {
         InputManager.NewInput += HandleNewInput;
         GameManager.StateChanged += HandleStateChanged;
+        FloorManager.BroadcastPivot += HandleBroadcastPivot;
     }
 
     private void OnDisable()
     {
         InputManager.NewInput -= HandleNewInput;
         GameManager.StateChanged -= HandleStateChanged;
+        FloorManager.BroadcastPivot -= HandleBroadcastPivot;
+    }
+
+    private Vector3 _mapCentre;
+
+    private void HandleBroadcastPivot(Vector3 pivot)
+    {
+        _mapCentre = pivot;
     }
 
     private void HandleStateChanged(GameState newState)
@@ -136,16 +146,25 @@ public class PlayerManager : MonoBehaviour
             }
         }
     }
+    
+    private List<Vector2> _usedPositions = new List<Vector2>();
 
     private void CreateNewPlayer(KeyCode key)
     {
         Rob_CharacterController newPlayer = Instantiate(_playerPrefab, transform);
-        newPlayer.transform.SetPositionAndRotation(
-            _player1Spawn.position + (-_spawnOffset * _player1Spawn.right * _playerList.Count),
-            _player1Spawn.rotation
-        );
+        Vector2 pos;
+        do
+        {
+            float i = Mathf.Floor(UnityEngine.Random.Range(2f, 23f)) * 2f;
+            float j = Mathf.Floor(UnityEngine.Random.Range(2f, 23f)) * 2f;
+            pos = new Vector2(i, j);
+        } while (_usedPositions.Contains(pos));
+        
+        newPlayer.transform.position = new Vector3(pos.x, 0f, pos.y);
+        newPlayer.transform.LookAt(_mapCentre);
         _playerDict[key] = newPlayer;
         _playerList.Add(newPlayer);
+        _usedPositions.Add(pos);
     }
     
     private void RerollPlayer(KeyCode key)

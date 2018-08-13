@@ -7,17 +7,6 @@ using Random = UnityEngine.Random;
 
 public class FloorManager : MonoBehaviour
 {
-    private struct IntPair
-    {
-        public readonly int I;
-        public readonly int J;
-        public IntPair(int i, int j)
-        {
-            I = i;
-            J = j;
-        }
-    }
-
     public static event Action<Vector3> BroadcastPivot;
     
     private const int AtomsPerSide = 25;
