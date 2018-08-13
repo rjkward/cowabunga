@@ -66,17 +66,25 @@ public class Rob_CharacterController : MonoBehaviour
     {
         if (hit.gameObject.CompareTag(CowTag))
         {
+            if (IsHit)
+            {
+                return;
+            }
+            
+            var otherCc = hit.gameObject.GetComponent<Rob_CharacterController>();
+            if (otherCc.IsHit)
+            {
+                return;
+            }
+            
             Transform other = hit.transform;
             Vector3 toOther = (other.position - transform.position).normalized;
-            bool selfIsHit = IsHit;
-            var otherCc = hit.gameObject.GetComponent<Rob_CharacterController>();
-            bool otherIsHit = otherCc.IsHit;
-            if (!selfIsHit && Vector3.Angle(transform.forward, toOther) < 45f)
+            if (Vector3.Angle(transform.forward, toOther) < 45f)
             {
                 otherCc.Bounce(toOther);
             }
 
-            if (!otherIsHit && Vector3.Angle(other.forward, -toOther) < 45f)
+            if (Vector3.Angle(other.forward, -toOther) < 45f)
             {
                 Bounce(-toOther);
             }
