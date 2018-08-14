@@ -34,7 +34,7 @@ public class UIManager : MonoBehaviour
     private readonly string[] _flavour = new[]
     {
         "union rep",
-        "violent antifascist",
+        "violent anti-fascist",
         "cocaine enthusiast",
         "mother of two",
         "likes opera",
