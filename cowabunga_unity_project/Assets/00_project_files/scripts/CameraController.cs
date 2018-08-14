@@ -24,6 +24,9 @@ public class CameraController : MonoBehaviour
     private IList<Rob_CharacterController> _players;
 
     private Vector3 _mapCentre;
+    
+    public static event Action<KeyCode> StartIntro;
+    public static event Action EndIntros;
 
     private void OnEnable()
     {
@@ -58,6 +61,13 @@ public class CameraController : MonoBehaviour
         target /= (float)playerList.Count;
 
         _lookTarget = target;
+        
+        _queue.Add(new KeyPlayerPair(key, newPlayer));
+        if (!_introsActive)
+        {
+            _introsActive = true;
+            StartCoroutine(PlayIntros());
+        }
     }
 
     private void HandleStateChanged(GameState newState)
@@ -127,6 +137,47 @@ public class CameraController : MonoBehaviour
     }
 
     private bool _introsActive;
+    private List<KeyPlayerPair> _queue = new List<KeyPlayerPair>();
+
+    private class KeyPlayerPair
+    {
+        public KeyCode Key;
+        public Rob_CharacterController Player;
+        public KeyPlayerPair(KeyCode key, Rob_CharacterController player)
+        {
+            Key = key;
+            Player = player;
+        }
+    }
+
+    private IEnumerator PlayIntros()
+    {
+        while (_queue.Count > 0)
+        {
+            var info = _queue[0];
+            _introLookTarget = info.Player.transform.position;
+            if (StartIntro != null)
+            {
+                StartIntro.Invoke(info.Key);
+            }
+            
+            _queue.RemoveAt(0);
+            yield return _wait;
+        }
+
+        if (EndIntros != null)
+        {
+            EndIntros.Invoke();
+        }
+        
+        _introsActive = false;
+    }
+
+    // private Vector3 _introRotatePivot;
+    private Vector3 _introLookTarget;
+    private Vector3 _introDistance = new Vector3(0f, 1f, 3f);
+    private WaitForSeconds _wait = new WaitForSeconds(1f);
+    
 
     private IEnumerator SmoothDamp()
     {
@@ -140,9 +191,9 @@ public class CameraController : MonoBehaviour
             
             _currentLook = Vector3.SmoothDamp(
                 _currentLook,
-                _lookTarget,
+                _introsActive ? _introLookTarget : _lookTarget,
                 ref _lookVelocity,
-                0.3f);
+                _introsActive ? 0.1f : 0.3f);
             
             _mainCamera.transform.LookAt(_currentLook);
             
@@ -156,7 +207,9 @@ public class CameraController : MonoBehaviour
     {
         while (true)
         {
-            _targetPosition.position = _rotatePivot + Quaternion.Euler(0f, Time.time * 20f, 0f) * _distance;
+            Vector3 pivot = _introsActive ? _introLookTarget : _rotatePivot;
+            Vector3 dist = _introsActive ? _introDistance : _distance;
+            _targetPosition.position = pivot + Quaternion.Euler(0f, Time.time * 20f, 0f) * dist;
             yield return null;
         }
     }
