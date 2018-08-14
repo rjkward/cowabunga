@@ -45,7 +45,7 @@ public class CameraController : MonoBehaviour
         FloorManager.BroadcastPivot -= HandleBroadcastPivot;
     }
 
-    private void HandlePlayerCreated(IList<Rob_CharacterController> playerList)
+    private void HandlePlayerCreated(KeyCode key, Rob_CharacterController newPlayer, IList<Rob_CharacterController> playerList)
     {
         _players = playerList;
         Vector3 target = Vector3.zero;
@@ -125,6 +125,8 @@ public class CameraController : MonoBehaviour
             yield return null;
         }
     }
+
+    private bool _introsActive;
 
     private IEnumerator SmoothDamp()
     {

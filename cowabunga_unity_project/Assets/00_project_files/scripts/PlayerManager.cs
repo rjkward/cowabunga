@@ -9,7 +9,7 @@ public class PlayerManager : MonoBehaviour
 {
     public static event Action<Rob_CharacterController> OnePlayerRemaining;
     public static event Action EnoughPlayers;
-    public static event Action<IList<Rob_CharacterController>> PlayerCreated;
+    public static event Action<KeyCode, Rob_CharacterController, IList<Rob_CharacterController>> PlayerCreated;
     [SerializeField]
     private Rob_CharacterController _playerPrefab;
     private readonly List<Rob_CharacterController> _playerList = new List<Rob_CharacterController>();
@@ -132,10 +132,10 @@ public class PlayerManager : MonoBehaviour
             }
             else
             {
-                CreateNewPlayer(key);
+                player = CreateNewPlayer(key);
                 if (PlayerCreated != null)
                 {
-                    PlayerCreated.Invoke(_playerList.AsReadOnly());
+                    PlayerCreated.Invoke(key, player, _playerList.AsReadOnly());
                 }
                 
                 if (!_enoughInvoked && _playerList.Count > 1 && EnoughPlayers != null)
@@ -149,7 +149,7 @@ public class PlayerManager : MonoBehaviour
     
     private List<Vector2> _usedPositions = new List<Vector2>();
 
-    private void CreateNewPlayer(KeyCode key)
+    private Rob_CharacterController CreateNewPlayer(KeyCode key)
     {
         Rob_CharacterController newPlayer = Instantiate(_playerPrefab, transform);
         newPlayer.PickRandomSkin();
@@ -166,6 +166,7 @@ public class PlayerManager : MonoBehaviour
         _playerDict[key] = newPlayer;
         _playerList.Add(newPlayer);
         _usedPositions.Add(pos);
+        return newPlayer;
     }
     
     private readonly WaitForSeconds _wait = new WaitForSeconds(0.5f);
