@@ -36,7 +36,7 @@ public class UIManager : MonoBehaviour
         "cocaine enthusiast",
         "mother of two",
         "likes opera",
-        "mathematics professor",
+        "history professor",
         "convicted felon",
         "divorced",
         "party animal",
@@ -63,7 +63,15 @@ public class UIManager : MonoBehaviour
         "multilingual",
         "speaks Swahili",
         "Shakespearean actor",
-        "soprano"
+        "soprano",
+        "recovering alcoholic",
+        "published author",
+        "disgraced politician",
+        "patient zero",
+        "photophopbic",
+        "sadomasochist",
+        "chaotic neutral",
+        "jealous lover"
     };
 
     private void OnEnable()
