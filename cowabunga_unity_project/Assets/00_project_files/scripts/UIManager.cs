@@ -34,7 +34,36 @@ public class UIManager : MonoBehaviour
         "union rep",
         "antifascist",
         "cocaine enthusiast",
-        "mother of two"
+        "mother of two",
+        "likes opera",
+        "mathematics professor",
+        "convicted felon",
+        "divorced",
+        "party animal",
+        "pro-choice activist",
+        "bank robber",
+        "demolitions expert",
+        "amateur brain surgeon",
+        "volunteer firefighter",
+        "cryptoanarchist",
+        "foot fetishist",
+        "idiot savant",
+        "train driver",
+        "engineer",
+        "architect",
+        "terminally ill",
+        "wedding planner",
+        "ex military",
+        "designated marksman",
+        "black belt",
+        "hoarder",
+        "kind as fuck",
+        "immortal",
+        "secretly a horse",
+        "multilingual",
+        "speaks Swahili",
+        "Shakespearean actor",
+        "soprano"
     };
 
     private void OnEnable()
@@ -102,6 +131,7 @@ public class UIManager : MonoBehaviour
 
     readonly WaitForSeconds _wait25 = new WaitForSeconds(0.25f);
     readonly WaitForSeconds _wait125 = new WaitForSeconds(0.125f);
+    readonly WaitForSeconds _wait5 = new WaitForSeconds(0.5f);
 
     private IEnumerator SlideShowWords()
     {
@@ -123,12 +153,25 @@ public class UIManager : MonoBehaviour
         yield return _wait125;
         _introScreen.SetActive(true);
         _introNameText.text = string.Format(Quotes, key.ToString());
-        _introFlavourText.text = GetFlavour();
+        _introFlavourText.text = String.Empty;
         yield return _wait25;
-        _introFlavourText.text = GetFlavour();
-        yield return _wait25;
-        _introFlavourText.text = GetFlavour();
-        yield return _wait25;
+        string first = GetFlavour();
+        _introFlavourText.text = first;
+        yield return _wait5;
+        string second;
+        do
+        {
+            second = GetFlavour();
+        } while (second == first);
+        _introFlavourText.text = second;
+        yield return _wait5;
+        string third;
+        do
+        {
+            third = GetFlavour();
+        } while (third == first || third == second);
+        _introFlavourText.text = third;
+        yield return _wait5;
         _introScreen.SetActive(false);
 
     }

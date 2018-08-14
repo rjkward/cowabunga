@@ -176,7 +176,7 @@ public class CameraController : MonoBehaviour
     // private Vector3 _introRotatePivot;
     private Vector3 _introLookTarget;
     private Vector3 _introDistance = new Vector3(0f, 1f, 3f);
-    private WaitForSeconds _wait = new WaitForSeconds(1f);
+    private WaitForSeconds _wait = new WaitForSeconds(2f);
     
 
     private IEnumerator SmoothDamp()
