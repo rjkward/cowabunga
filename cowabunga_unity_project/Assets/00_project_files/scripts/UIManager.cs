@@ -12,19 +12,21 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private GameObject _selectScreen;
     [SerializeField]
-    private GameObject _startPrompt;
-    [SerializeField] 
+    private Text _startPrompt;
+    [SerializeField]
     private GameObject _victoryScreen;
-    [SerializeField] 
+    [SerializeField]
     private GameObject _startScreen;
-    [SerializeField] 
+    [SerializeField]
     private Text _startText;
-    [SerializeField] 
+    [SerializeField]
     private GameObject _introScreen;
-    [SerializeField] 
+    [SerializeField]
     private Text _introNameText;
-    [SerializeField] 
+    [SerializeField]
     private Text _introFlavourText;
+    [SerializeField]
+    private GameObject _replay;
 
     private readonly string[] _startWords = new[]
         { "FIGHT", "TO", "THE", "DEATH", "YOU", "CAN", "ONLY", "TURN", "RIGHT"};
@@ -32,7 +34,7 @@ public class UIManager : MonoBehaviour
     private readonly string[] _flavour = new[]
     {
         "union rep",
-        "antifascist",
+        "violent antifascist",
         "cocaine enthusiast",
         "mother of two",
         "likes opera",
@@ -41,6 +43,7 @@ public class UIManager : MonoBehaviour
         "divorced",
         "party animal",
         "pro-choice activist",
+        "gynecologist",
         "bank robber",
         "demolitions expert",
         "amateur brain surgeon",
@@ -57,11 +60,10 @@ public class UIManager : MonoBehaviour
         "designated marksman",
         "black belt",
         "hoarder",
-        "kind as fuck",
+        "incredibly kind",
         "immortal",
         "secretly a horse",
         "multilingual",
-        "speaks Swahili",
         "Shakespearean actor",
         "soprano",
         "recovering alcoholic",
@@ -71,7 +73,36 @@ public class UIManager : MonoBehaviour
         "photophopbic",
         "sadomasochist",
         "chaotic neutral",
-        "jealous lover"
+        "jealous lover",
+        "mysterious girl",
+        "witch",
+        "gymnast",
+        "dairy abolitionist",
+        "libertine",
+        "cyborg",
+        "sex addict",
+        "freedom fighter",
+        "marxist",
+        "pastry chef",
+        "gun for hire",
+        "car salesman",
+        "left handed",
+        "cake maker",
+        "rally driver",
+        "priest",
+        "gardener", 
+        "gossip",
+        "tourist",
+        "student",
+        "writer",
+        "14 years old",
+        "escape artist",
+        "coward",
+        "radio star",
+        "survivor",
+        "underdog",
+        "humble",
+        "trotskyite"
     };
 
     private void OnEnable()
@@ -89,7 +120,7 @@ public class UIManager : MonoBehaviour
         CameraController.StartIntro -= HandleStartIntro;
         CameraController.EndIntros -= HandleEndIntros;
     }
-    
+
     private void HandleEndIntros()
     {
         _selectScreen.SetActive(true);
@@ -105,12 +136,10 @@ public class UIManager : MonoBehaviour
         StartCoroutine(IntroSlideShow(key));
     }
 
+    private const string StartText = "press space when everyone's here";
     private void HandleEnoughPlayers()
     {
-        if (!_startPrompt.activeSelf)
-        {
-            _startPrompt.SetActive(true);
-        }
+        _startPrompt.text = StartText;
     }
 
     private void HandleStateChanged(GameState newState)
@@ -131,6 +160,7 @@ public class UIManager : MonoBehaviour
                 break;
             case GameState.Ended:
                 _victoryScreen.SetActive(true);
+                StartCoroutine(ReplayPrompt());
                 break;
             default:
                 throw new ArgumentOutOfRangeException("newState", newState, null);
@@ -149,7 +179,7 @@ public class UIManager : MonoBehaviour
             _startText.text = _startWords[i];
             yield return _wait25;
         }
-        
+
         _startScreen.SetActive(false);
     }
 
@@ -163,29 +193,50 @@ public class UIManager : MonoBehaviour
         _introNameText.text = string.Format(Quotes, key.ToString());
         _introFlavourText.text = String.Empty;
         yield return _wait25;
-        string first = GetFlavour();
-        _introFlavourText.text = first;
+        _introFlavourText.text = GetFlavour();
         yield return _wait5;
-        string second;
-        do
-        {
-            second = GetFlavour();
-        } while (second == first);
-        _introFlavourText.text = second;
+        _introFlavourText.text = GetFlavour();
         yield return _wait5;
-        string third;
-        do
-        {
-            third = GetFlavour();
-        } while (third == first || third == second);
-        _introFlavourText.text = third;
+        _introFlavourText.text = GetFlavour();
         yield return _wait5;
         _introScreen.SetActive(false);
 
     }
+    
+    private readonly string[] _last = new string[9];
+    private int _pointer;
 
     private string GetFlavour()
     {
-        return _flavour[Random.Range(0, _flavour.Length)];
+        int index = Random.Range(0, _flavour.Length);
+        string newFlavour = _flavour[index];
+        while (IsInLast(newFlavour))
+        {
+            index = (index + 1) % _flavour.Length;
+            newFlavour = _flavour[index];
+        }
+
+        _last[_pointer] = newFlavour;
+        _pointer = (_pointer + 1) % _last.Length;
+        return newFlavour;
+    }
+
+    private bool IsInLast(string flavour)
+    {
+        for (int i = 0; i < _last.Length; i++)
+        {
+            if (flavour == _last[i])
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private IEnumerator ReplayPrompt()
+    {
+        yield return new WaitForSeconds(3f);
+        _replay.SetActive(true);
     }
 }
