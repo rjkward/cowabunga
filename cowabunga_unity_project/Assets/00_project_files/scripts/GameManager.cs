@@ -27,6 +27,8 @@ public class GameManager : MonoBehaviour
         InputManager.NewInput += HandleNewInput;
         PlayerManager.EnoughPlayers += HandleEnoughPlayers;
         PlayerManager.OnePlayerRemaining += HandleOneRemaining;
+        CameraController.StartIntro += HandleStartIntro;
+        CameraController.EndIntros += HandleEndIntros;
     }
 
     private void OnDisable()
@@ -34,6 +36,20 @@ public class GameManager : MonoBehaviour
         InputManager.NewInput -= HandleNewInput;
         PlayerManager.EnoughPlayers -= HandleEnoughPlayers;
         PlayerManager.OnePlayerRemaining -= HandleOneRemaining;
+        CameraController.StartIntro -= HandleStartIntro;
+        CameraController.EndIntros -= HandleEndIntros;
+    }
+
+    private bool _introsActive;
+
+    private void HandleEndIntros()
+    {
+        _introsActive = false;
+    }
+
+    private void HandleStartIntro(KeyCode obj)
+    {
+        _introsActive = true;
     }
 
     private void HandleOneRemaining(Rob_CharacterController remaining)
@@ -53,7 +69,7 @@ public class GameManager : MonoBehaviour
                 
                 break;
             case GameState.PlayerSelect:
-                if (input.Space && _enoughPlayers)
+                if (input.Space && _enoughPlayers && !_introsActive)
                 {
                     ChangeGameState(GameState.Started);
                     _floorManager.StartErosion();
