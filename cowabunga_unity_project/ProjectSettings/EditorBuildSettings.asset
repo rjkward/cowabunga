@@ -4,4 +4,7 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/00_project_files/scenes/rob_test.unity
+    guid: 3075fbd331ac545939768ffe8578ef62
