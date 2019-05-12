@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using Enums;
 using UnityEngine;
 using UnityEngine.UI;
@@ -27,6 +28,13 @@ public class UIManager : MonoBehaviour
     private Text _introFlavourText;
     [SerializeField]
     private GameObject _replay;
+
+    [SerializeField] private PlayerIndicator _indicatorPrefab;
+    [SerializeField] private Camera _mainCamera;
+
+    [SerializeField] private GameObject _indicatorParent;
+
+    private List<PlayerIndicator> _indicators = new List<PlayerIndicator>();
 
     private readonly string[] _startWords = new[]
         { "FIGHT", "TO", "THE", "DEATH", "YOU", "CAN", "ONLY", "TURN", "RIGHT"};
@@ -90,7 +98,7 @@ public class UIManager : MonoBehaviour
         "cake maker",
         "rally driver",
         "priest",
-        "gardener", 
+        "gardener",
         "gossip",
         "tourist",
         "student",
@@ -111,6 +119,15 @@ public class UIManager : MonoBehaviour
         PlayerManager.EnoughPlayers += HandleEnoughPlayers;
         CameraController.StartIntro += HandleStartIntro;
         CameraController.EndIntros += HandleEndIntros;
+        PlayerManager.PlayerCreated += HandlePlayerCreated;
+    }
+
+    private void HandlePlayerCreated(KeyCode key, Rob_CharacterController player,
+    IList<Rob_CharacterController> players)
+    {
+        PlayerIndicator indicator = Instantiate(_indicatorPrefab, _indicatorParent.transform);
+        indicator.Init(key, player, _mainCamera);
+        _indicators.Add(indicator);
     }
 
     private void OnDisable()
@@ -119,11 +136,13 @@ public class UIManager : MonoBehaviour
         PlayerManager.EnoughPlayers -= HandleEnoughPlayers;
         CameraController.StartIntro -= HandleStartIntro;
         CameraController.EndIntros -= HandleEndIntros;
+        PlayerManager.PlayerCreated -= HandlePlayerCreated;
     }
 
     private void HandleEndIntros()
     {
         _selectScreen.SetActive(true);
+        _indicatorParent.SetActive(true);
     }
 
     private void HandleStartIntro(KeyCode key)
@@ -132,6 +151,8 @@ public class UIManager : MonoBehaviour
         {
             _selectScreen.SetActive(false);
         }
+
+        _indicatorParent.SetActive(false);
 
         StartCoroutine(IntroSlideShow(key));
     }
@@ -156,6 +177,8 @@ public class UIManager : MonoBehaviour
                 StopAllCoroutines();
                 _introScreen.SetActive(false);
                 _selectScreen.SetActive(false);
+                _indicatorParent.SetActive(false);
+                _indicators.Clear();
                 StartCoroutine(SlideShowWords());
                 break;
             case GameState.Ended:
@@ -202,7 +225,7 @@ public class UIManager : MonoBehaviour
         _introScreen.SetActive(false);
 
     }
-    
+
     private readonly string[] _last = new string[9];
     private int _pointer;
 
