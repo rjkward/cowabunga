@@ -23,7 +23,7 @@ GameObject:
   - component: {fileID: 114736865546914026}
   - component: {fileID: 114842418552639072}
   m_Layer: 5
-  m_Name: PlayerIndicatorPrefab
+  m_Name: PlayerIndicatorPrefabMask
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -40,7 +40,7 @@ MonoBehaviour:
   m_Script: {fileID: 708705254, guid: f70555f144d8491a825f0804e09c671c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 2100000, guid: c6fd907b5b6da4b54b4c4519c2c3a92c, type: 2}
+  m_Material: {fileID: 2100000, guid: fb7195379999e4c2cbfc77602fd5ec9a, type: 2}
   m_Color: {r: 0.91764706, g: 0.10980392, b: 0.36078432, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:

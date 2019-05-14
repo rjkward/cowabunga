@@ -12,14 +12,19 @@ public class UIManager : MonoBehaviour
     private GameObject _splashScreen;
     [SerializeField]
     private GameObject _selectScreen;
+
+    [SerializeField] private GameObject _selectScreenMask;
     [SerializeField]
     private Text _startPrompt;
+    [SerializeField]
+    private Text _startPromptMask;
     [SerializeField]
     private GameObject _victoryScreen;
     [SerializeField]
     private GameObject _startScreen;
     [SerializeField]
     private Text _startText;
+
     [SerializeField]
     private GameObject _introScreen;
     [SerializeField]
@@ -30,11 +35,11 @@ public class UIManager : MonoBehaviour
     private GameObject _replay;
 
     [SerializeField] private PlayerIndicator _indicatorPrefab;
+    [SerializeField] private PlayerIndicator _indicatorPrefabMask;
     [SerializeField] private Camera _mainCamera;
 
     [SerializeField] private GameObject _indicatorParent;
-
-    private List<PlayerIndicator> _indicators = new List<PlayerIndicator>();
+    [SerializeField] private GameObject _indicatorMaskParent;
 
     private readonly string[] _startWords = new[]
         { "FIGHT", "TO", "THE", "DEATH", "YOU", "CAN", "ONLY", "TURN", "RIGHT"};
@@ -127,7 +132,10 @@ public class UIManager : MonoBehaviour
     {
         PlayerIndicator indicator = Instantiate(_indicatorPrefab, _indicatorParent.transform);
         indicator.Init(key, player, _mainCamera);
-        _indicators.Add(indicator);
+
+        PlayerIndicator mask = Instantiate(_indicatorPrefabMask, _indicatorMaskParent.transform);
+        mask.Init(key, player, _mainCamera);
+
     }
 
     private void OnDisable()
@@ -142,7 +150,9 @@ public class UIManager : MonoBehaviour
     private void HandleEndIntros()
     {
         _selectScreen.SetActive(true);
+        _selectScreenMask.SetActive(true);
         _indicatorParent.SetActive(true);
+        _indicatorMaskParent.SetActive(true);
     }
 
     private void HandleStartIntro(KeyCode key)
@@ -150,9 +160,11 @@ public class UIManager : MonoBehaviour
         if (_selectScreen.activeSelf)
         {
             _selectScreen.SetActive(false);
+            _selectScreenMask.SetActive(false);
         }
 
         _indicatorParent.SetActive(false);
+        _indicatorMaskParent.SetActive(false);
 
         StartCoroutine(IntroSlideShow(key));
     }
@@ -161,6 +173,7 @@ public class UIManager : MonoBehaviour
     private void HandleEnoughPlayers()
     {
         _startPrompt.text = StartText;
+        _startPromptMask.text = StartText;
     }
 
     private void HandleStateChanged(GameState newState)
@@ -172,13 +185,15 @@ public class UIManager : MonoBehaviour
             case GameState.PlayerSelect:
                 _splashScreen.SetActive(false);
                 _selectScreen.SetActive(true);
+                _selectScreenMask.SetActive(true);
                 break;
             case GameState.Started:
                 StopAllCoroutines();
                 _introScreen.SetActive(false);
                 _selectScreen.SetActive(false);
+                _selectScreenMask.SetActive(false);
                 _indicatorParent.SetActive(false);
-                _indicators.Clear();
+                _indicatorMaskParent.SetActive(false);
                 StartCoroutine(SlideShowWords());
                 break;
             case GameState.Ended:

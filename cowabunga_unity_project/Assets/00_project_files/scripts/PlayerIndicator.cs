@@ -15,13 +15,13 @@ public class PlayerIndicator : MonoBehaviour
 
     private void OnEnable()
     {
-        _text.enabled = false;
         InputManager.NewInput += HandleNewInput;
     }
 
     private void OnDisable()
     {
         InputManager.NewInput -= HandleNewInput;
+        _text.enabled = false;
     }
 
     private void HandleNewInput(InputManager inputManager)
@@ -47,6 +47,6 @@ public class PlayerIndicator : MonoBehaviour
 
     private void LateUpdate()
     {
-        transform.position = _camera.WorldToScreenPoint(_player.transform.position) - 30f * Vector3.up;
+        transform.position = _camera.WorldToScreenPoint(_player.transform.position) - 40f * Vector3.up;
     }
 }
