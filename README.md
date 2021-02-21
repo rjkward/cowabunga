@@ -8,8 +8,8 @@ play it on [itch.io](https://o-a-k.itch.io/cowabunga)
 
 WARNING: terrible code within
 
-!(./gifs/cowabunga.gif)
+![that is cowabunga!](./gifs/cowabunga.gif)
 
-!(./gifs/fight.gif)
+![start your engines](./gifs/fight.gif)
 
-!(./gifs/collapse.gif)
+![there can only be 1](./gifs/collapse.gif)
